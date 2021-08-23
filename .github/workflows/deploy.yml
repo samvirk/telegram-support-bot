@@ -26,21 +26,21 @@ jobs:
       - name: Set BOT_TOKEN
         uses: jacobtomlinson/gha-find-replace@master
         with:
-          include: "\/config\\.ts"
+          include: "config.ts"
           find: "BOT_TOKEN"
           replace: "${{ secrets.BOT_TOKEN }}"
 
       - name: Set STAFFCHAT_ID
         uses: jacobtomlinson/gha-find-replace@master
         with:
-          include: "\/config\\.ts"
+          include: "config.ts"
           find: "STAFFCHAT_ID"
           replace: "${{ secrets.STAFFCHAT_ID }}"
 
       - name: Set OWNER_ID
         uses: jacobtomlinson/gha-find-replace@master
         with:
-          include: "\/config\\.ts"
+          include: "config.ts"
           find: "OWNER_ID"
           replace: "${{ secrets.OWNER_ID }}"
 
