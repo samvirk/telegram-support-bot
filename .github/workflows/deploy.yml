@@ -1,0 +1,51 @@
+name: Build And Deploy
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+env:
+  AZURE_ACR_REPOSITORY: telegram-support-bot
+  REGISTRY: samvirk
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.REGISTRY }}.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Set BOT_TOKEN
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          include: "\/config\\.ts"
+          find: "BOT_TOKEN"
+          replace: "${{ secrets.BOT_TOKEN }}"
+
+      - name: Set STAFFCHAT_ID
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          include: "\/config\\.ts"
+          find: "STAFFCHAT_ID"
+          replace: "${{ secrets.STAFFCHAT_ID }}"
+
+      - name: Set OWNER_ID
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          include: "\/config\\.ts"
+          find: "OWNER_ID"
+          replace: "${{ secrets.OWNER_ID }}"
+
+      - name: Build
+        run: docker build . -t ${{ env.REGISTRY }}.azurecr.io/${{ env.AZURE_ACR_REPOSITORY }}:latest
+
+      - name: Push to ACR
+        run: docker push ${{ env.REGISTRY }}.azurecr.io/${{ env.AZURE_ACR_REPOSITORY }}:latest
