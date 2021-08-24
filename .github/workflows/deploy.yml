@@ -16,6 +16,11 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
 
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Login to Azure Container Registry
         uses: azure/docker-login@v1
         with:
@@ -45,7 +50,22 @@ jobs:
           replace: "${{ secrets.OWNER_ID }}"
 
       - name: Build
-        run: docker build . -t ${{ env.REGISTRY }}.azurecr.io/${{ env.AZURE_ACR_REPOSITORY }}:latest
+        run: docker build . -t ${{ env.REGISTRY }}.azurecr.io/${{ env.AZURE_ACR_REPOSITORY }}:${{ github.sha }}
 
       - name: Push to ACR
-        run: docker push ${{ env.REGISTRY }}.azurecr.io/${{ env.AZURE_ACR_REPOSITORY }}:latest
+        run: docker push ${{ env.REGISTRY }}.azurecr.io/${{ env.AZURE_ACR_REPOSITORY }}:${{ github.sha }}
+
+      - name: 'Deploy to Azure Container Instances'
+        uses: 'azure/aci-deploy@v1'
+        with:
+          resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          image: ${{ env.REGISTRY }}.azurecr.io/${{ env.AZURE_ACR_REPOSITORY }}:${{ github.sha }}
+          registry-login-server: ${{ env.REGISTRY }}.azurecr.io
+          registry-username: ${{ secrets.ACR_USERNAME }}
+          registry-password: ${{ secrets.ACR_PASSWORD }}
+          azure-file-volume-share-name: telegrambotdatabase
+          azure-file-volume-account-name: samvirksupportbotdata
+          azure-file-volume-account-key: ${{ secrets.AZURE_FILE_VOLUME_KEY }}
+          azure-file-volume-mount-path: /bot/data
+          name: samvirk-support-chatbot
+          location: 'westeurope'
