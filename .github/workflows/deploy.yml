@@ -16,11 +16,6 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
 
-      - name: 'Login via Azure CLI'
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
       - name: Login to Azure Container Registry
         uses: azure/docker-login@v1
         with:
@@ -60,6 +55,11 @@ jobs:
     needs: build
 
     steps:
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
       - name: 'Deploy to Azure Container Instances'
         uses: 'azure/aci-deploy@v1'
         with:
