@@ -2,8 +2,6 @@ const Database = require('better-sqlite3');
 const db = new Database('./data/support.db', {
 /* verbose: console.log */ }); // debugging
 
-db.pragma('journal_mode=wal');
-
 try {
   db.prepare(
       `ALTER TABLE supportees ADD category TEXT;`).run();
