@@ -11,15 +11,15 @@ const config = {
 
   // customize your language
   language: {
-    startCommandText: "Hei,\n\n" +
-    "Jeg er her for å svare på det du lurer på om SAMVIRK! Fyr løs med spørsmål her, men sjekk gjerne om svaret ditt allerede finnes på https://my.samvirk.com/FAQ. \n\n" +
+    startCommandText: "Velkommen til Samvirk Support!\n" +
+    "Vi er her for å svare på det du lurer på om SAMVIRK! Fyr løs med spørsmål, men sjekk gjerne om svaret ditt allerede finnes på https://my.samvirk.com/FAQ.\n\n" +
     "// \n\n" +
-    "Hi, \n\n" +
-    "I'm here to answer all your questions about SAMVIRK! Come with it, but please check https://my.samvirk.com/FAQ to see if your question is already answered there.",
+    "Welcome to Samvirk Support!\n" +
+    "We're here to answer all your questions about SAMVIRK! Come with it, but please check https://my.samvirk.com/FAQ to see if your question is already answered there.",
     faqCommandText: 'Les mer på https://my.samvirk.com/FAQ',
-    helpCommandText: '<b>Available commands:</b>\n/help\n/faq\n/id',
+    helpCommandText: 'Bare skriv et spørsmål til oss her i bot-en, så vil du få et svar fra oss.\n\nJust write a question to this bot, and you will get an answer from us.\n\n<b>Tilgjengelige kommandoer / Available commands:</b>\n/help\n/faq',
     contactMessage: 'Takk for meldingen. Du hører fra oss så snart som mulig.\n\nThank you for contacting us. We will answer as soon as possible.',
-    blockedSpam: 'You sent quite a number of questions in the last while. Please calm down and wait until staff reviews them.',
+    blockedSpam: 'You sent quite a number of questions in the last while. Please wait until staff reviews them.',
     ticket: 'Ticket',
     closed: 'closed',
     acceptedBy: 'was accepted by',
@@ -45,9 +45,9 @@ const config = {
     openTickets: 'Open Tickets',
     support: 'Support',
     prvChatOnly: 'This command can be used in private chat only.',
-    ticketClosed: 'Your ticket was closed by our staff. You can open a new ticket at any time.',
+    ticketClosed: 'Spørsmålet ditt ble merket som besvart. Dersom du fremdeles lurer på noe, kan du gjerne stille et nytt spørsmål.\n\nYour question was marked as resolved. If you still have any questions, please feel free to ask them here.',
     links: 'Direct support links',
-    textFirst: 'Please send us a message before sending an image so that we can help you better.',
+    textFirst: 'Vennligst send oss et spørsmål før du sender et bilde. Da er det enklere for oss å hjelpe deg.\n\nPlease send us a message before sending an image so that we can help you better.',
     ticketClosedError: 'You cannot reply to a closed ticket.',
     automatedReply: 'This is an automated reply.',
     automatedReplyAuthor: 'BottyBot.',
