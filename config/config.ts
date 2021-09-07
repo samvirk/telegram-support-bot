@@ -12,11 +12,13 @@ const config = {
   // customize your language
   language: {
     startCommandText: "Velkommen til Samvirk Support!\n" +
-    "Vi er her for å svare på det du lurer på om SAMVIRK! Fyr løs med spørsmål, men sjekk gjerne om svaret ditt allerede finnes på https://my.samvirk.com/FAQ.\n\n" +
+    "Vi er her for å svare på det du lurer på om SAMVIRK! Fyr løs med spørsmål, men sjekk gjerne om svaret ditt allerede finnes på https://my.samvirk.com/faq.\n\n" +
+    "Husk at svarene vi gir deg er rådgivende og veiledende. Det kan forekomme endringer i tiden fremover nå som produktet fremdeles er i utvikling.\n\n" +
     "// \n\n" +
     "Welcome to Samvirk Support!\n" +
-    "We're here to answer all your questions about SAMVIRK! Come with it, but please check https://my.samvirk.com/FAQ to see if your question is already answered there.",
-    faqCommandText: 'Les mer på https://my.samvirk.com/FAQ',
+    "We're here to answer all your questions about SAMVIRK! Come with it, but please check https://my.samvirk.com/faq to see if your question is already answered there.\n\n" +
+    "Keep in mind that the answers we give you are advisory and guiding. There may be changes in the time ahead, considering that the product is still in development.",
+    faqCommandText: 'Les mer på https://my.samvirk.com/faq',
     helpCommandText: 'Bare skriv et spørsmål til oss her i bot-en, så vil du få et svar fra oss.\n\nJust write a question to this bot, and you will get an answer from us.\n\n<b>Tilgjengelige kommandoer / Available commands:</b>\n/help\n/faq',
     contactMessage: 'Takk for meldingen. Du hører fra oss så snart som mulig.\n\nThank you for contacting us. We will answer as soon as possible.',
     blockedSpam: 'You sent quite a number of questions in the last while. Please wait until staff reviews them.',

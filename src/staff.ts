@@ -15,7 +15,8 @@ function ticketMsg(name, message) {
     `${name}</b>,\n\n`+
     `${middleware.escapeText(message.text)}\n\n`+
     `${config.language.regards}\n`+
-    `${message.from.first_name}`;
+    `Samvirk-teamet`;
+    //`${message.from.first_name}`;
 }
 
 /**
