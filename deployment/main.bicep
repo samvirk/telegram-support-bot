@@ -9,8 +9,8 @@ var appServiceName = 'app-telegram-bot-${environmentName}'
 module appService 'container-http.bicep' = {
   name: appServiceName
   params: {
-    enableIngress: true
-    isExternalIngress: true
+    enableIngress: false
+    isExternalIngress: false
     location: location
     environmentName: containerAppEnvironmentName
     containerImage: '${containerRegistry}.azurecr.io/${containerImage}'
