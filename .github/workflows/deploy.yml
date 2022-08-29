@@ -56,6 +56,9 @@ jobs:
     needs: build
 
     steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
       - name: 'Login via Azure CLI'
         uses: azure/login@v1
         with:
@@ -67,7 +70,6 @@ jobs:
           inlineScript: |
             resourceGroup=rg-samvirk-${{ env.ENVIRONMENT }}
             az group create -g $resourceGroup -l northeurope
-            ls
             az deployment group create -g $resourceGroup -f ./deployment/main.bicep \
              -p \
                 environmentName=${{ env.ENVIRONMENT }} \
