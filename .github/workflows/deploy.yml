@@ -67,6 +67,7 @@ jobs:
           inlineScript: |
             resourceGroup=rg-samvirk-${{ env.ENVIRONMENT }}
             az group create -g $resourceGroup -l northeurope
+            ls
             az deployment group create -g $resourceGroup -f ./deployment/main.bicep \
              -p \
                 environmentName=${{ env.ENVIRONMENT }} \
