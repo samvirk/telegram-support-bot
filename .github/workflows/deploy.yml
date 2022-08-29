@@ -8,6 +8,7 @@ on:
 env:
   AZURE_ACR_REPOSITORY: telegram-support-bot
   REGISTRY: samvirk
+  ENVIRONMENT: production
 
 jobs:
   build:
@@ -59,20 +60,15 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          
-      - name: 'Deploy to Azure Container Instances'
-        uses: 'azure/aci-deploy@v1'
+
+      - name: Deploy bicep
+        uses: azure/CLI@v1
         with:
-          resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}
-          dns-name-label: ${{ secrets.AZURE_RESOURCE_GROUP }}
-          image: ${{ env.REGISTRY }}.azurecr.io/${{ env.AZURE_ACR_REPOSITORY }}:${{ github.sha }}
-          memory: 0.5
-          registry-login-server: ${{ env.REGISTRY }}.azurecr.io
-          registry-username: ${{ secrets.ACR_USERNAME }}
-          registry-password: ${{ secrets.ACR_PASSWORD }}
-          # azure-file-volume-share-name: telegrambotdatabase
-          # azure-file-volume-account-name: samvirksupportbotdata
-          # azure-file-volume-account-key: ${{ secrets.AZURE_FILE_VOLUME_KEY }}
-          # azure-file-volume-mount-path: /bot/data
-          name: samvirk-support-chatbot
-          location: 'westeurope'
+          inlineScript: |
+            resourceGroup=rg-samvirk-${{ env.ENVIRONMENT }}
+            az group create -g $resourceGroup -l northeurope
+
+            az deployment group create -g $resourceGroup -f ./deployment/main.bicep \
+             -p \
+                environmentName=${{ env.ENVIRONMENT }} \
+                containerImage=${{ env.AZURE_ACR_REPOSITORY }}:${{ github.sha }}
