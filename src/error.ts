@@ -1,18 +1,21 @@
 import * as fs from 'fs';
 import * as util from 'util';
-import config from '../config/config';
+import cache from './cache';
+import * as middleware from './middleware';
 const debugFile = './config/debug.log';
 const logStdout = process.stdout;
 
-function init(bot) {
+function init(bot, logs = true) {
   // overload logging to file
   console.log = function(d) {
-    logStdout.write(util.format(d) + '\n');
-    fs.appendFile(debugFile,
+    if (logs) {
+      logStdout.write(util.format(d) + '\n');
+      fs.appendFile(debugFile,
         new Date() + ': ' + util.format(d) + '\n', 'utf8',
         function(err) {
           if (err) throw err;
         });
+    }
   };
 
   // catch uncaught exceptions to log
@@ -24,9 +27,7 @@ function init(bot) {
           if (err) throw err;
         });
     console.error(new Date() + ': ' + 'Error: ', err);
-    bot.telegram.sendMessage(
-        config.staffchat_id, `An error occured, please report this to your admin: \n\n ${err}`,
-    );
+    middleware.msg(cache.config.staffchat_id, `An error occured, please report this to your admin: \n\n ${err}`, {});
     process.exit(1);
   });
 
@@ -40,9 +41,8 @@ function init(bot) {
           if (err) throw err;
         });
     console.dir(new Date() + ': ' + err["stack"]);
-    bot.telegram.sendMessage(
-        config.staffchat_id, `An error occured, please report this to your admin: \n\n ${err}`,
-    );
+    bot.drop();
+    middleware.msg(cache.config.staffchat_id, `An error occured, please report this to your admin: \n\n ${err}`, {});
   });
 }
 

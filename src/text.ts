@@ -1,7 +1,8 @@
 import * as db from './db';
-import config from '../config/config';
+import cache from './cache';
 import * as staff from './staff';
 import * as users from './users';
+import * as middleware from './middleware';
 
 /**
  * Text handler
@@ -12,11 +13,12 @@ import * as users from './users';
 function handleText(bot, ctx, keys) {
   if (ctx.session.mode == 'private_reply') {
     staff.privateReply(bot, ctx);
-  } else if (config.categories.length > 0 && !(JSON.stringify(config.categories)
+  } else if (cache.config.categories && cache.config.categories.length > 0 &&
+    !(JSON.stringify(cache.config.categories)
       .indexOf(ctx.message.text) > -1)) {
-    if (!ctx.session.admin && config.categories &&
+    if (!ctx.session.admin && cache.config.categories &&
     !ctx.session.group) {
-      ctx.reply(config.language.services, {
+      middleware.reply(ctx, cache.config.language.services, {
         reply_markup: {
           keyboard: keys,
         },
@@ -38,7 +40,6 @@ function ticketHandler(bot, ctx) {
   if (ctx.chat.type === 'private') {
     db.getOpen(ctx.message.from.id, ctx.session.groupCategory, function(ticket) {
       if (ticket == undefined) {
-        console.log(ctx.session.groupCategory)
         db.add(ctx.message.from.id, 'open', ctx.session.groupCategory);
       }
       users.chat(ctx, bot, ctx.message.chat);

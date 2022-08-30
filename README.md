@@ -4,9 +4,12 @@
 [![NPM Version](https://img.shields.io/npm/v/telegraf.svg?style=flat-square)](https://www.npmjs.com/)
 [![node](https://img.shields.io/node/v/telegraf.svg?style=flat-square)](https://www.npmjs.com/package/)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](http://standardjs.com/)
+[![pipeline status](https://gitlab.com/botty-group/erics-container-repo/badges/main/pipeline.svg)](https://gitlab.com/botty-group/erics-container-repo/-/pipelines)
 
 # [Telegram Support Bot](https://github.com/bostrot/telegram-support-bot) (Ticketing system for Telegram)
 is a support bot for telegram bots, using the Telegraf framework (by [@dotcypress](https://github.com/dotcypress)). It lets users create tickets which will be send to a staff group and can be answered by a reply.
+
+Telegram ticketing implementation:
 
 <table>
 <tr>
@@ -15,7 +18,11 @@ is a support bot for telegram bots, using the Telegraf framework (by [@dotcypres
 </tr>
 </table>
 
+If you need help or need a hosted solution of this check out <a href="https://botspace.bostrot.com">Botspace</a> for a one-click setup.
+
 ## Documentation
+
+See the [WIKI](https://github.com/bostrot/telegram-support-bot/wiki) for more detailed information.
 
 `telegram-support-bot` was built on top of [`Telegraf`](https://github.com/telegraf/telegraf) libary.
 
@@ -46,94 +53,29 @@ Features:
 * Private reply to user
 * Anonymize users
 * Auto reply based on keywords [beta]
+* Web chat  
 
 ## Installation
 
-Install Node ( > 8 ) and npm ( > 3.38.0 ).
+See the [WIKI](https://github.com/bostrot/telegram-support-bot/wiki) for more detailed information.
 
-Run it
 ```bash
-git clone https://github.com/bostrot/telegram-support-bot.git
-cd telegram-support-bot
-npm i
-cp config/config-sample.ts config/config.ts     # Adjust settings in config.ts
-npm run prod                                    # For debugging: npm run dev
+mv config/config-sample.yaml config.yaml
 ```
 
-## Configuration
+**Docker** container:
 
-You can get your ID with /id. The first number will be yours the second the one from the group you are in (if you are in one; including the minus).
+Either with docker-compose:
 
-You need to set your bot token and chat ids in `config.ts`:
-
-```js
-// bot settings
-bot_token: 'YOUR_BOT_TOKEN', // support bot token
-staffchat_id: 'SUPERGROUP_CHAT_ID', // telegram staff group chat id eg. -123456789
-owner_id: 'YOUR_TELEGRAM_ID',
-spam_time: 5 * 60 * 1000, // time (in MS) in which user may send 5 messages
-allow_private: false, // Allow / disallow option for staff to chat privately
-auto_close_tickets: true, // Closes messages after reply
-```
-
-If you replace `categories: false` with following snippet, you enable the subgroup system.
-This will allow the user to select a subcategory (e.g. for specified staff). If a chat has the same ID
-as the `staffchat_id` you can e.g. create a help chat for using the bot.
-
-```js
-// subgroups for different subcategories in JS Array -> Object format
-categories:
-[
-  {
-    name: 'Category1', subgroups: [
-      {name: 'Sub1', group_id: '-12345678910'},
-      {name: 'Sub2', group_id: '-12345678910'},
-      {name: 'Sub3', group_id: '-12345678910'},
-    ],
-  },
-  {
-    name: 'Category2', subgroups: [
-      {name: 'Sub4', group_id: '-12345678910'},
-      {name: 'Sub5', group_id: '-12345678910'},
-      {name: 'Sub6', group_id: '-12345678910'},
-    ],
-  },
-  {
-    name: 'Category3', group_id: '-12345678910'
-  },
-  {
-    name: 'Admin Chat', group_id: '-12345678910' 
-  },
-],
-```
-
-To edit autoreply keywords adjust `config/strings.ts` according to your needs:
-
-```js
-const strings = [
-    [ "how do I install this?", "You don't." ],
-    [ "are you sure?", "Yes." ],
-    [ "Some other Case Sensitive Text", "OK." ],
-]
-```
-
-## Docker
-
-via docker-compose:
 ```
 docker-compose up -d
 ```
 
-or build:
+## Upgrading to v3.0.0 or to master
 
-```
-docker build -t bostrot/telegram-support-bot:latest .
-docker run bostrot/telegram-support-bot -v /path/to/config_dir:/bot/config
-```
+The latest version uses a new config file in YAML format which would break old versions.
 
-## Update to v1.0.1
-
-Backup and delete the database file (src/support.db) and move config.js to folder config. Then just start it normally.
+In order to make old versions work with the master you would need to use the new config.yaml file instead of the config.ts file from before. The easiest would be if you copy the config-sample.yaml to config.yaml (both in the config folder) and edit the settings similar to your old config.ts file. There is no need to delete the database file so old tickets can be kept open.
 
 ## Telegram token
 
@@ -143,14 +85,11 @@ by [chatting with BotFather](https://core.telegram.org/bots#6-botfather).
 
 BotFather will give you a *token*, something like `123456789:AbCdfGhIJKlmNoQQRsTUVwxyZ`.
 
-## Creating a bot
-
-[Telegraf bot framework](https://github.com/telegraf/telegraf) for building a bot
-
-
 ## Help
 
 You are welcome to contribute with pull requests, bug reports, ideas and donations.
+
+If you need help or need a hosted solution of this check out <a href="https://botspace.bostrot.com">Botspace</a> for a one-click setup.
 
 ## Custom requests
 

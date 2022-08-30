@@ -1,11 +1,10 @@
-FROM node:latest
-
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y wget
+FROM node:16-alpine
+WORKDIR /bot
 
 COPY . /bot
-RUN cd bot/ && \
-    npm i
+
+RUN apk update
+RUN apk add wget python3 build-base
+RUN npm install
 
 CMD ["npm", "run", "prod", "--prefix", "/bot"]
