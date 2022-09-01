@@ -5,7 +5,7 @@ const config = {
   owner_id: 'OWNER_ID',
   spam_time: 5 * 60 * 1000, // time (in MS) in which user may send 5 messages
   allow_private: true, // Allow / disallow option for staff to chat privately
-  auto_close_tickets: true,
+  auto_close_tickets: false,
   direct_reply: true,
   anonymous_tickets: false, //Include userid in tickets or not
 
