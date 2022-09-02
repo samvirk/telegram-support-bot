@@ -1,6 +1,14 @@
-/* eslint-disable new-cap */
-const Telegraf = require( 'telegraf');
-const {Extra} = Telegraf;
+import * as fs from 'fs';
+import * as YAML from 'yaml';
+import {Context, Config} from './interfaces';
+import cache from './cache';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+cache.config = YAML.parse(
+    fs.readFileSync(__dirname + '/config/config.yaml', 'utf8'),
+) as Config;
 
 import * as middleware from './middleware';
 import * as commands from './commands';
@@ -8,95 +16,176 @@ import * as permissions from './permissions';
 import * as inline from './inline';
 import * as text from './text';
 import * as files from './files';
-import config from '../config/config';
 import * as error from './error';
 
+import * as webserver from './addons/web';
+import * as signal from './addons/signal';
+import TelegramAddon from './addons/telegram';
 
-// Create new Telegraf() with token
-const bot = new Telegraf(config.bot_token);
+let defaultBot: TelegramAddon;
 
-// Init error handling
-error.init(bot);
+/**
+ * Create Bot
+ * @return {Bot}
+ */
+function createBot() {
+  if (cache.config != null && cache.config.bot_token != null) {
+    if (cache.config.bot_token == 'YOUR_BOT_TOKEN') {
+      console.error('Please change your bot token in config/config.yaml');
+      process.exit(1);
+    }
+    defaultBot = new TelegramAddon(cache.config.bot_token);
+  }
 
-// TODO: Unit testing
-const testing = false;
-if (testing) {
-  const {tests} = require('../tests/testing');
-  tests(bot);
+  return defaultBot;
 }
 
-// Use session and check for permissions on message
-bot.use(permissions.currentSession());
-bot.use((ctx, next) => permissions.checkPermissions(ctx, next, config));
+/**
+ * Main function
+ * @param {TelegramAddon} bot
+ * @param {boolean} logs
+ */
+function main(bot: TelegramAddon = defaultBot, logs = true) {
+  cache.bot = defaultBot;
+  // bot.sendMessage(cache.config.staffchat_id, 'Bot started');
+  // Check addon
+  if (cache.config.signal_enabled) {
+    signal.init(function(ctx: Context, msg: any[]) {
+      console.log(msg);
+      text.handleText(bot, ctx, msg);
+    });
+  }
 
-// Init category keys
-const keys = inline.initInline(bot, config);
+  // Start webserver
+  if (cache.config.web_server) {
+    webserver.init(bot);
+  }
+  // Init error handling
+  error.init(logs);
 
-// Set bots username
-bot.telegram.getMe().then((botInfo) => bot.options.username = botInfo.username);
+  // Use session and check for permissions on message
+  bot.use(bot.initSession());
 
-// Bot commands
-bot.command('open', (ctx) => commands.openCommand(ctx));
-bot.command('close', (ctx) => commands.closeCommand(bot, ctx));
-bot.command('ban', (ctx) => commands.banCommand(bot, ctx));
-bot.command('unban', (ctx) => commands.unbanCommand(bot, ctx));
-bot.command('start', (ctx) => {
-  ctx.session.mode = undefined;
-  ctx.session.modeData = undefined;
-  if (ctx.chat.type == 'private') {
-    ctx.reply(config.language.startCommandText);
-    if (config.categories.length > 0)
-      setTimeout(() => ctx.reply(config.language.services, inline.replyKeyboard(keys)), 500);    
-  } else ctx.reply(config.language.prvChatOnly);
-});
-bot.command('id', (ctx) => ctx.reply(ctx.from.id + ' ' + ctx.chat.id));
-bot.command('faq', (ctx) => ctx.reply(config.language.faqCommandText, Extra.HTML()));
-bot.command('help', (ctx) => ctx.reply(config.language.helpCommandText, Extra.HTML()));
-bot.command('links', (ctx) => {
-  let links = '';
-  const subcategories = [];
-  for (const i in config.categories) {
-    if (i !== undefined) {
-      for (const j in config.categories[i].subgroups) {
-        if (j !== undefined) {
-          const catName = config.categories[i].subgroups[j].name;
-          const id = (config.categories[i].name +
-            config.categories[i].subgroups[j].name)
-            .replace(/[\[\]\:\ "]/g, '').substr(0,63);
-          if (subcategories.indexOf(id) == -1) {
-            subcategories.push(id);
-            links += `${catName} - https://t.me/${bot.options.username}?start=${id}\n`;
+  bot.use((ctx: Context, next: () => any) => {
+    // Check dev mode
+    if (cache.config.dev_mode) {
+      middleware.reply(
+          ctx,
+          `_Dev mode is on: You might notice 
+      some delay in messages, no replies or other errors._`,
+          {parse_mode: cache.config.parse_mode},
+      );
+    }
+    permissions.checkPermissions(ctx, next, cache.config);
+  });
+
+  // Init category keys
+  const keys = inline.initInline(bot);
+
+  // Set bots username
+  // bot..getMe().then((botInfo) => bot.options.username = botInfo.username);
+
+  // Bot commands
+  bot.command('open', (ctx: Context) => commands.openCommand(ctx));
+  bot.command('close', (ctx: Context) => commands.closeCommand(ctx));
+  bot.command('ban', (ctx: Context) => commands.banCommand(ctx));
+  bot.command('reopen', (ctx: Context) => commands.reopenCommand(ctx));
+  bot.command('unban', (ctx: Context) => commands.unbanCommand(ctx));
+  bot.command('clear', (ctx: Context) => commands.clearCommand(ctx));
+  bot.command('start', (ctx: Context) => {
+    if (ctx.chat.type == 'private') {
+      middleware.reply(ctx, cache.config.language.startCommandText);
+      if (cache.config.categories && cache.config.categories.length > 0) {
+        setTimeout(
+            () =>
+              middleware.reply(
+                  ctx,
+                  cache.config.language.services,
+                  inline.replyKeyboard(keys),
+              ),
+            500,
+        );
+      }
+    } else middleware.reply(ctx, cache.config.language.prvChatOnly);
+  });
+  bot.command('id', (ctx: Context) =>
+    middleware.reply(ctx, `User ID: ${ctx.from.id}\nGroup ID: ${ctx.chat.id}`, {
+      parse_mode: cache.config.parse_mode,
+    }),
+  );
+  bot.command('faq', (ctx: Context) =>
+    middleware.reply(ctx, cache.config.language.faqCommandText, {
+      parse_mode: cache.config.parse_mode,
+    }),
+  );
+  bot.command('help', (ctx: Context) => commands.helpCommand(ctx));
+  bot.command('links', (ctx: Context) => {
+    let links = '';
+    const subcategories = [];
+    for (const i in cache.config.categories) {
+      if (i !== undefined) {
+        for (const j in cache.config.categories[i].subgroups) {
+          if (j !== undefined) {
+            const catName = cache.config.categories[i].subgroups[j].name;
+            const id = (
+              cache.config.categories[i].name +
+              cache.config.categories[i].subgroups[j].name
+            )
+                .replace(/[\[\]\:\ "]/g, '')
+                .substr(0, 63);
+            if (subcategories.indexOf(id) == -1) {
+              subcategories.push(id);
+              if (bot.botInfo != null) {
+                links += `${catName} - https://t.me/${bot.botInfo.username}?start=${id}\n`;
+              }
+            }
           }
         }
       }
     }
+    middleware.reply(ctx, `${cache.config.language.links}:\n${links}`, {
+      parse_mode: cache.config.parse_mode,
+    });
+  });
+
+  // Bot ons
+  bot.on('callback_query', (ctx: Context) => inline.callbackQuery(ctx));
+  bot.on([':photo'], (ctx: Context) => files.fileHandler('photo', bot, ctx));
+  bot.on([':video'], (ctx: Context) => files.fileHandler('video', bot, ctx));
+  bot.on([':document'], (ctx: Context) =>
+    files.fileHandler('document', bot, ctx),
+  );
+
+  // Bot regex
+  bot.hears(cache.config.language.back, (ctx: Context) =>
+    middleware.reply(
+        ctx,
+        cache.config.language.services,
+        inline.replyKeyboard(keys),
+    ),
+  );
+  bot.hears('testing', (ctx: Context) => text.handleText(bot, ctx, keys));
+  bot.hears(/(.+)/, (ctx: Context) => {
+    text.handleText(bot, ctx, keys);
+  });
+
+  // Catch bot errors
+  bot.catch((err: any, ctx: Context) => {
+    console.log('Error: ', err);
+    // Catch bot blocked by user
+    try {
+      middleware.reply(ctx, 'Message is not sent due to an error.');
+    } catch (e) {
+      console.log('Could not send error msg to chat: ', e);
+    }
+  });
+
+  if (logs) {
+    bot.start();
   }
-  ctx.reply(`${config.language.links}:\n${links}`, Extra.HTML())
-});
+}
 
-// Bot ons
-bot.on('callback_query', (ctx) => inline.callbackQuery(bot, ctx));
-bot.on('photo', (ctx) => middleware.downloadPhotoMiddleware(bot, ctx, () => 
-  files.fileHandler('photo', bot, ctx)));
-bot.on('video', (ctx) => middleware.downloadVideoMiddleware(bot, ctx, () => 
-  files.fileHandler('video', bot, ctx)));
-bot.on('document', (ctx) => middleware.downloadDocumentMiddleware(bot, ctx, () => 
-  files.fileHandler('document', bot, ctx)));
+createBot();
+main();
 
-// Bot regex
-bot.hears(config.language.back, (ctx) => ctx.reply(config.language.services, inline.replyKeyboard(keys)));
-bot.hears('testing', (ctx) => text.handleText(bot, ctx, keys));
-bot.hears(/(.+)/, (ctx) => text.handleText(bot, ctx, keys));
-
-// Catch bot errors
-bot.catch((err, ctx) => {
-  console.log('Error: ', err);
-  // Catch bot blocked by user
-  try {
-    ctx.reply('Message is not sent due to an error.');
-  } catch(e) {
-    console.log('Could not send error msg to chat: ', e);
-  }
-});
-
-bot.launch();
+export {createBot, main};

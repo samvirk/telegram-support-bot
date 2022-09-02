@@ -10,7 +10,7 @@ FROM node:latest
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y wget 
+    apt-get install -y wget python3
 
 COPY . /bot
 RUN cd bot/ && \
