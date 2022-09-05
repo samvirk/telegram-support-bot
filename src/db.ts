@@ -19,24 +19,18 @@ const check = function(
 
 const getOpen = function(
     userid: string | number,
-    category: string | null,
+    category: string | number | null,
     callback: Function,
 ) {
   const pool = new Pool();
-  pool.query(`select * from supportees where (userid = ` +
+  const getOpenQuery = `select * from supportees where (userid = ` +
     `'${userid}' or id = '${userid}') AND status='open' ` +
-    `${category ? `AND category = '${category}'` : ''}`,
+    `${category ? `AND category = '${category}'` : ''}`
+  pool.query(getOpenQuery,
     (err, res) => {
-      if (!res.rows.length) {
-        pool.query(`insert into public.supportees(userid, status, category) VALUES ('${userid}', 'open', '${category}');SELECT currval('supportees_id_seq') AS id;`, 
-          (err, inserted) => {
-            callback([inserted]);
-            pool.end()
-          })
-      } else {
-        callback(res.rows[0]);
-        pool.end()
-      }
+      const openTicket = res.rows.length ? res.rows[0] : undefined;
+      callback(openTicket);
+      pool.end();
     });
 };
 
@@ -55,7 +49,7 @@ const getId = function(
 ) {
   const pool = new Pool();
   pool.query(`select * from supportees where (userid = ` +
-    `${userid} or id = ${userid})`, (err, res) => { callback(res.rows.length ? res.rows[0] : undefined); pool.end() });
+    `'${userid}' or id = '${userid}')`, (err, res) => { callback(res.rows.length ? res.rows[0] : undefined); pool.end() });
 };
 
 const checkBan = function(
@@ -82,34 +76,27 @@ const reopen = function (userid: any, category: string) {
     `${category ? `AND category = '${category}'` : ''}`, () => pool.end());
 };
 
-const add = function(
+const add = async function(
     userid: string | number,
     status: string,
     category: string | number | null,
 ) {
   var pool = new Pool();
   if (status == 'closed') {
-    pool.query(
+    await pool.query(
       `UPDATE supportees SET status='closed' WHERE ` +
       `(userid='${userid}' or id='${userid}')` +
-      `${category ? `AND category = '${category}'` : ''}`,
-      () => pool.end());
+      `${category ? `AND category = '${category}'` : ''}`);
   } else if (status == 'open') {
-    // db.prepare(`DELETE FROM supportees WHERE userid='${userid}'` +
-    //    ` or id='${userid}'`).run();
-    pool
-      .query(
-        `REPLACE INTO supportees (userid, ` +
-        `status ${category ? `,category` : ''}) ` +
-        `VALUES ('${userid}', '${status}' ${category ? `,'${category}'` : ''})`,
-        () => pool.end());
+    await pool.query(
+        `INSERT INTO supportees (userid, status ${category ? `,category` : ''}) ` +
+        `VALUES ('${userid}', '${status}' ${category ? `,'${category}'` : ''}) `);
   } else if ((status = 'banned')) {
-    pool.query(
-      `REPLACE INTO supportees (userid, status, category)` +
-      `VALUES ('${userid}', '${status}', 'BANNED')`,
-      ()=> pool.end()
+    await pool.query(
+      `INSERT INTO supportees(userid, status, category) VALUES ('${userid}', '${status}', 'BANNED')`
     );
   }
+  await pool.end();
 };
 
 const open = function(

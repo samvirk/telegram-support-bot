@@ -252,14 +252,14 @@ function forwardFile(
   db.getOpen(
       ctx.message.from.id,
       ctx.session.groupCategory,
-      function(ticket: any) {
+      async function(ticket: any) {
         let ok = false;
         if (
           ticket == undefined ||
-        ticket.status == undefined ||
-        ticket.status == 'closed'
+          ticket.status == undefined ||
+          ticket.status == 'closed'
         ) {
-          db.add(ctx.message.from.id, 'open', null);
+          await db.add(ctx.message.from.id, 'open', null);
           ok = true;
         }
         if (ok || (ticket !== undefined && ticket.status !== 'banned')) {

@@ -3,7 +3,9 @@ import * as signal from './addons/signal';
 import {Context} from './interfaces';
 
 // strict escape
-const strictEscape = function(str: string | any[]) {
+const strictEscape = function (str: string | any[]) {
+  console.log('strictEscape')
+  console.log(str)
   let newStr = '';
   const chars = ['[', ']', '(', ')', '_', '*', '~', '`'];
   for (let i = 0; i < str.length; i++) {
@@ -18,8 +20,8 @@ const strictEscape = function(str: string | any[]) {
 };
 
 // escape special characters
-const escapeText = function(str: string | string[]) {
-  if (cache.config.parse_mode == 'HTML' || cache.config.parse_mode == 'html') {
+const escapeText = function (str: string | string[], parse_mode = '') {
+  if (cache.config.parse_mode == 'HTML' || cache.config.parse_mode == 'html' || parse_mode == 'html' || parse_mode == 'HTML') {
     return str
         .toString()
         .replace(/&/g, '&amp;')
@@ -51,8 +53,8 @@ const escapeText = function(str: string | string[]) {
 };
 
 // handle messages to web socket
-const msg = function(id: string | number, msg: string | string[], extra = {}) {
-  msg = escapeText(msg);
+const msg = function (id: string | number, msg: string | string[], extra: { parse_mode: string } = { parse_mode: ''}) {
+  msg = escapeText(msg, extra.parse_mode);
   // Check web message
   if (id.toString().indexOf('WEB') > -1 && id != cache.config.staffchat_id) {
     // Web message

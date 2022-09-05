@@ -38,7 +38,7 @@ module appService 'container-http.bicep' = {
       { name: 'PGPORT', value: '5432' }
       { name: 'PGUSER', value: '${dbLogin}@db-telegram-bot-testing' }
       { name: 'PGPASSWORD', value: dbPassword }
-      { name: 'PGDATABASE', value: dbName }
+      { name: 'PGDATABASE', value: 'postgres' }
     ]
   }
 }

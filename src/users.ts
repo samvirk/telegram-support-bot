@@ -11,11 +11,11 @@ import * as middleware from './middleware';
  * @return {String} text
  */
 function ticketMsg(
-    ticket: { id: { toString: () => string } },
+    ticket: { toString: () => string },
     message: {
-       from: { first_name: string | any[]; language_code: any };
-       text: string | any[];
-    },
+    from: { first_name: string | any[]; language_code: any };
+    text: string | any[];
+  },
     anon = true,
     autoReplyInfo: any,
 ) {
@@ -26,7 +26,7 @@ function ticketMsg(
   const esc: any = middleware.strictEscape;
   return (
     `${cache.config.language.ticket} ` +
-    `#T${ticket.id.toString().padStart(6, '0')} ${cache.config.language.from} ` +
+    `#T${ticket.toString().padStart(6, '0')} ${cache.config.language.from} ` +
     `[${esc(message.from.first_name)}](${link})` +
     ` ${cache.config.language.language}: ` +
     `${message.from.language_code}\n\n` +
@@ -90,7 +90,7 @@ function chat(ctx: Context, chat: { id: string }) {
     db.getOpen(
         chat.id,
         ctx.session.groupCategory,
-        function(ticket: { id: { toString: () => string } }) {
+      function (ticket: { id: string }) {
           if (!isAutoReply) {
             middleware.msg(
                 chat.id,
@@ -103,12 +103,12 @@ function chat(ctx: Context, chat: { id: string }) {
                 {parse_mode: cache.config.parse_mode},
             );
           }
-
+          
           // To staff
           middleware.msg(
               cache.config.staffchat_id,
               ticketMsg(
-                  ticket,
+                  ticket.id,
                   ctx.message,
                   cache.config.anonymous_tickets,
                   autoReplyInfo,
@@ -125,7 +125,7 @@ function chat(ctx: Context, chat: { id: string }) {
             middleware.msg(
                 ctx.session.group,
                 ticketMsg(
-                    ticket,
+                    ticket.id,
                     ctx.message,
                     cache.config.anonymous_tickets,
                     autoReplyInfo,
@@ -174,7 +174,7 @@ function chat(ctx: Context, chat: { id: string }) {
           middleware.msg(
               cache.config.staffchat_id,
               ticketMsg(
-                  ticket,
+                  ticket.id,
                   ctx.message,
                   cache.config.anonymous_tickets,
                   autoReplyInfo,
@@ -185,7 +185,7 @@ function chat(ctx: Context, chat: { id: string }) {
             middleware.msg(
                 ctx.session.group,
                 ticketMsg(
-                    ticket,
+                    ticket.id,
                     ctx.message,
                     cache.config.anonymous_tickets,
                     autoReplyInfo,
@@ -207,12 +207,9 @@ function chat(ctx: Context, chat: { id: string }) {
       cache.ticketID,
       ctx.session.groupCategory,
     function (ticket: { id: { toString: () => string } }) {
-      if (!ticket.id) {
-        ticket.id = cache.ticketID;
-      }
         console.log(
             ticketMsg(
-                ticket,
+                ticket.id,
                 ctx.message,
                 cache.config.anonymous_tickets,
                 autoReplyInfo,

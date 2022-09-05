@@ -34,4 +34,13 @@ resource postgresql 'Microsoft.DBforPostgreSQL/servers@2017-12-01' = {
   }
 }
 
+resource firewallRule 'Microsoft.DBforPostgreSQL/servers/firewallRules@2017-12-01' = {
+  name: '${dbName}AllowAllWindowsAzureIps'
+  parent: postgresql
+  properties: {
+    startIpAddress: '0.0.0.0'
+    endIpAddress: '0.0.0.0'
+  }
+}
+
 output dbHost string = postgresql.properties.fullyQualifiedDomainName

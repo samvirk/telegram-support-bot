@@ -94,7 +94,9 @@ function main(bot: TelegramAddon = defaultBot, logs = true) {
   bot.command('clear', (ctx: Context) => commands.clearCommand(ctx));
   bot.command('start', (ctx: Context) => {
     if (ctx.chat.type == 'private') {
-      middleware.reply(ctx, cache.config.language.startCommandText);
+      middleware.reply(ctx, cache.config.language.startCommandText, {
+        parse_mode: 'HTML',
+      });
       if (cache.config.categories && cache.config.categories.length > 0) {
         setTimeout(
             () =>

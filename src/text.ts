@@ -44,9 +44,9 @@ function ticketHandler(bot: TelegramAddon, ctx: Context) {
     db.getOpen(
         ctx.message.from.id,
         ctx.session.groupCategory,
-        function(ticket: any) {
+        async function(ticket: any) {
           if (ticket == undefined) {
-            db.add(ctx.message.from.id, 'open', ctx.session.groupCategory);
+            await db.add(ctx.message.from.id, 'open', ctx.session.groupCategory);
           }
           users.chat(ctx, ctx.message.chat);
         },
