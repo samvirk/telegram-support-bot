@@ -73,4 +73,5 @@ jobs:
             az deployment group create -g $resourceGroup -f ./deployment/main-bot.bicep \
              -p \
                 environmentName=${{ env.ENVIRONMENT }} \
-                containerImage=${{ env.AZURE_ACR_REPOSITORY }}:${{ github.sha }}
+                containerImage=${{ env.AZURE_ACR_REPOSITORY }}:${{ github.sha }} \
+                dbPassword=${{ secrets.DB_PASSWORD }}

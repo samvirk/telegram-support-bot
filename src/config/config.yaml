@@ -1,12 +1,12 @@
 # bot testing
-bot_token: '5635494831:AAGKPEwcQ6ZQbT0H0safvRv_1mHRPFa2G5w' # support bot token
-staffchat_id: '-660283561' # eg. -123456789
-owner_id: '865580321'
+# bot_token: '5635494831:AAGKPEwcQ6ZQbT0H0safvRv_1mHRPFa2G5w' # support bot token
+# staffchat_id: '-660283561' # eg. -123456789
+# owner_id: '865580321'
 
-# bot settings
-# bot_token: 'BOT_TOKEN', # support bot token
-# staffchat_id: 'STAFFCHAT_ID', # eg. -123456789
-# owner_id: 'OWNER_ID',
+# bot settings 
+bot_token: 'BOT_TOKEN', # support bot token
+staffchat_id: 'STAFFCHAT_ID', # eg. -123456789
+owner_id: 'OWNER_ID',
 spam_time: 5 * 60 * 1000 # time (in MS) in which user may send 5 messages
 allow_private: true # Allow / disallow option for staff to chat privately
 auto_close_tickets: false
