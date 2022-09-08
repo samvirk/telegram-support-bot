@@ -6,4 +6,4 @@ docker build . -t samvirk.azurecr.io/app-telegram-bot:$tag -f ./Dockerfile && do
 
 az group create -n $resourceGroup -l northeurope
 
-az deployment group create -g $resourceGroup -f ./deployment/main.bicep -p environmentName=$environment -p containerImage=app-telegram-bot:$tag
+az deployment group create -g $resourceGroup -f ./deployment/main-bot.bicep -p environmentName=$environment -p containerImage=app-telegram-bot:$tag

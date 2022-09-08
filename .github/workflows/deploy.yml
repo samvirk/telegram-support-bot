@@ -27,21 +27,21 @@ jobs:
       - name: Set BOT_TOKEN
         uses: jacobtomlinson/gha-find-replace@master
         with:
-          include: "config.ts"
+          include: "config.yaml"
           find: "BOT_TOKEN"
           replace: "${{ secrets.BOT_TOKEN }}"
 
       - name: Set STAFFCHAT_ID
         uses: jacobtomlinson/gha-find-replace@master
         with:
-          include: "config.ts"
+          include: "config.yaml"
           find: "STAFFCHAT_ID"
           replace: "${{ secrets.STAFFCHAT_ID }}"
 
       - name: Set OWNER_ID
         uses: jacobtomlinson/gha-find-replace@master
         with:
-          include: "config.ts"
+          include: "config.yaml"
           find: "OWNER_ID"
           replace: "${{ secrets.OWNER_ID }}"
 
@@ -70,7 +70,8 @@ jobs:
           inlineScript: |
             resourceGroup=rg-samvirk-${{ env.ENVIRONMENT }}
             az group create -g $resourceGroup -l northeurope
-            az deployment group create -g $resourceGroup -f ./deployment/main.bicep \
+            az deployment group create -g $resourceGroup -f ./deployment/main-bot.bicep \
              -p \
                 environmentName=${{ env.ENVIRONMENT }} \
-                containerImage=${{ env.AZURE_ACR_REPOSITORY }}:${{ github.sha }}
+                containerImage=${{ env.AZURE_ACR_REPOSITORY }}:${{ github.sha }} \
+                dbPassword=${{ secrets.DB_PASSWORD }}

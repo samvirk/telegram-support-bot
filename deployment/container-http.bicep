@@ -57,23 +57,12 @@ resource containerApp 'Microsoft.App/containerApps@2022-01-01-preview' = {
           image: containerImage
           name: containerAppName
           env: env
-          volumeMounts: [{
-            mountPath: '/bot/data'
-            volumeName: 'azure-files-volume'
-          }]
         }
       ]
       scale: {
         minReplicas: minReplicas
         maxReplicas: maxReplicas
       }
-      volumes: [
-        {
-          name: 'azure-files-volume'
-          storageType: 'AzureFile'
-          storageName: 'environment-storage'
-        }
-      ]
     }
   }
 }

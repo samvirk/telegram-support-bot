@@ -2,9 +2,23 @@ param location string = resourceGroup().location
 param environmentName string
 param containerRegistry string = 'samvirk'
 param containerImage string
+@secure()
+param dbPassword string
 
 var containerAppEnvironmentName = 'env-samvirk-${environmentName}'
 var appServiceName = 'app-telegram-bot-${environmentName}'
+var dbName = 'db-telegram-bot-${environmentName}'
+var dbLogin = 'samvirkadmin'
+
+module db 'postgresql.bicep' = {
+  name: dbName
+  params: {
+    dbName: dbName
+    location: location
+    adminLogin: dbLogin
+    adminPassword: dbPassword
+  }
+}
 
 module appService 'container-http.bicep' = {
   name: appServiceName
@@ -20,7 +34,12 @@ module appService 'container-http.bicep' = {
     minReplicas: 1
     maxReplicas: 1
     containerRegistry: containerRegistry
+    env: [
+      { name: 'PGHOST', value: db.outputs.dbHost }
+      { name: 'PGPORT', value: '5432' }
+      { name: 'PGUSER', value: '${dbLogin}@db-telegram-bot-${environmentName}' }
+      { name: 'PGPASSWORD', value: dbPassword }
+      { name: 'PGDATABASE', value: 'postgres' }
+    ]
   }
 }
-
-

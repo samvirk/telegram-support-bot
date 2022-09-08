@@ -1,4 +1,5 @@
 # Config file
+config.ts
 support.db
 build/
 *.rsls
@@ -64,3 +65,4 @@ typings/
 test/testing.js
 test/support.test.js
 config/support.db.old
+
