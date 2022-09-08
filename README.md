@@ -115,4 +115,3 @@ If you need help or need a hosted solution of this check out <a href="https://bo
 ## Custom requests
 
 Hit me up for hosting or other custom solutions [@bostrot_bot](http://t.me/bostrot_bot)
-
