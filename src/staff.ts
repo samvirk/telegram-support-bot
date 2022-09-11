@@ -160,7 +160,7 @@ function chat(ctx: Context) {
           // To staff msg sent
           middleware.msg(
               ctx.chat.id,
-              `${cache.config.language.msg_sent} ${name[1]}`,
+              `${cache.config.language.msg_sent} ${name[1]} #T${ticket.userid}`,
               // eslint-disable-next-line new-cap
               {parse_mode: cache.config.parse_mode}, /* .notifications(false) */
           );
