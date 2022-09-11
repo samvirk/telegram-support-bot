@@ -105,7 +105,7 @@ function chat(ctx: Context) {
     db.getOpen(
         userid[1],
         ctx.session.groupCategory,
-        function(ticket: { userid: string }) {
+        function(ticket: { userid: string, id: { toString: () => string } }) {
           if (userid === null || userid === undefined) {
             return;
           }
@@ -160,7 +160,7 @@ function chat(ctx: Context) {
           // To staff msg sent
           middleware.msg(
               ctx.chat.id,
-              `${cache.config.language.msg_sent} ${name[1]} #T${ticket.userid}`,
+              `${cache.config.language.msg_sent} ${name[1]} #T${ticket.id.toString().padStart(6, '0')}`,
               // eslint-disable-next-line new-cap
               {parse_mode: cache.config.parse_mode}, /* .notifications(false) */
           );
