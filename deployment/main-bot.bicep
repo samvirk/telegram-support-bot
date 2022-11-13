@@ -7,7 +7,7 @@ param dbPassword string
 
 var containerAppEnvironmentName = 'env-samvirk-${environmentName}'
 var appServiceName = 'app-telegram-bot-${environmentName}'
-var dbName = 'db-telegram-bot-${environmentName}'
+var dbName = contains(environmentName, 'prod') ? 'db-telegram-bot-production' : 'db-telegram-bot-testing'
 var dbLogin = 'samvirkadmin'
 
 module db 'postgresql.bicep' = {
@@ -37,7 +37,7 @@ module appService 'container-http.bicep' = {
     env: [
       { name: 'PGHOST', value: db.outputs.dbHost }
       { name: 'PGPORT', value: '5432' }
-      { name: 'PGUSER', value: '${dbLogin}@db-telegram-bot-${environmentName}' }
+      { name: 'PGUSER', value: '${dbLogin}@${dbName}' }
       { name: 'PGPASSWORD', value: dbPassword }
       { name: 'PGDATABASE', value: 'postgres' }
     ]
