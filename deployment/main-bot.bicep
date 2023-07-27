@@ -14,7 +14,7 @@ module db 'postgresql.bicep' = {
   name: dbName
   params: {
     dbName: dbName
-    location: location
+    location: 'northeurope'
     adminLogin: dbLogin
     adminPassword: dbPassword
   }
