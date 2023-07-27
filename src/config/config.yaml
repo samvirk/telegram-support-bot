@@ -28,30 +28,28 @@ dev_mode: false # Enable/disable dev mode
 # customize your language
 language: 
   startCommandText: |
-    Velkommen til Samvirk Support!
-    Vi er her for å svare på det du lurer på om SAMVIRK! Fyr løs med spørsmål, men sjekk gjerne om svaret ditt allerede finnes på https://my.samvirk.com/faq.
-
-    Husk at svarene vi gir deg er rådgivende og veiledende. Det kan forekomme endringer i tiden fremover nå som produktet fremdeles er i utvikling.
+    Hei
+    Boten er ikke i drift.
+    Har du spørsmål, anbefaler vi deg å lese vår informasjon og FAQ på https://my.samvirk.com/
+    Om du ikke finner svar på det du leter etter der, kan du kontakte oss på kontakt@samvirk.com
     
-    //
-    
-    Welcome to Samvirk Support!
-    We're here to answer all your questions about SAMVIRK! Come with it, but please check https://my.samvirk.com/faq to see if your question is already answered there.
-
-    Keep in mind that the answers we give you are advisory and guiding. There may be changes in the time ahead, considering that the product is still in development.
+    Hello,
+    The bot is not operational.
+    If you have questions, we recommend that you read our information and FAQ at https://my.samvirk.com/
+    If you do not find the answer to what you are looking for there, you can contact us at kontakt@samvirk.com
   faqCommandText: 'Les mer på https://my.samvirk.com/faq'
   helpCommandText: |
-    Bare skriv et spørsmål til oss her i bot-en, så vil du få et svar fra oss.
-    
-    Just write a question to this bot, and you will get an answer from us.
-    
     Tilgjengelige kommandoer / Available commands:
     /help
     /faq
   contactMessage: |+
-    Takk for meldingen. Du hører fra oss så snart som mulig.
-    
-    Thank you for contacting us. We will answer as soon as possible.
+    Boten er ikke i drift.
+    Har du spørsmål, anbefaler vi deg å lese vår informasjon og FAQ på https://my.samvirk.com/
+    Om du ikke finner svar på det du leter etter der, kan du kontakte oss på kontakt@samvirk.com
+        
+    The bot is not operational.
+    If you have questions, we recommend that you read our information and FAQ at https://my.samvirk.com/
+    If you do not find the answer to what you are looking for there, you can contact us at kontakt@samvirk.com
   blockedSpam: 'You sent quite a number of questions in the last while. Please wait until staff reviews them.'
   ticket: 'Ticket'
   closed: 'closed'
@@ -79,9 +77,13 @@ language:
   support: 'Support'
   prvChatOnly: 'This command can be used in private chat only.'
   ticketClosed: |+
-    Spørsmålet ditt ble merket som besvart. Dersom du fremdeles lurer på noe, kan du gjerne stille et nytt spørsmål.
-    
-    Your question was marked as resolved. If you still have any questions, please feel free to ask them here.
+    Saken din er avsluttet da boten ikke lengre er i drift.
+    Har du spørsmål, anbefaler vi deg å lese vår informasjon og FAQ på https://my.samvirk.com/
+    Om du ikke finner svar på det du leter etter der, kan du kontakte oss på kontakt@samvirk.com
+
+    Your case is closed as the bot is no longer operational.
+    If you have questions, we recommend you read our information and FAQ at https://my.samvirk.com/
+    If you do not find the answer to what you are looking for there, you can contact us at kontakt@samvirk.com
   links: 'Direct support links'
   textFirst: |+
     Vennligst send oss et spørsmål før du sender et bilde. Da er det enklere for oss å hjelpe deg.
